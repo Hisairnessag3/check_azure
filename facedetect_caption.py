@@ -1,45 +1,44 @@
 import requests
-import json
+
+
 
 # === Replace these with your actual values ===
-subscription_key = "YOUR_COMPUTER_VISION_KEY"
-endpoint = "YOUR_COMPUTER_VISION_ENDPOINT"  # e.g. "https://<region>.api.cognitive.microsoft.com/"
-image_url = "https://upload.wikimedia.org/wikipedia/commons/9/99/Black_and_white_portrait_of_a_man.jpg"
+subscription_key = ""
+endpoint = ""
 
-# Computer Vision Analyze API URL
+
+images = ["https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Fronalpstock_big.jpg/800px-Fronalpstock_big.jpg",
+          "https://upload.wikimedia.org/wikipedia/commons/f/f4/Bulgarian_national_football_team.JPG",
+          "https://upload.wikimedia.org/wikipedia/commons/4/46/2023_MMA_IVE.jpg"]
 analyze_url = f"{endpoint}/vision/v3.2/analyze"
-
-# Parameters for what we want to analyze
-params = {
-    "visualFeatures": "Description,Faces"
-}
-
-# Headers and body
+params = {"visualFeatures": "Description,Faces"}
 headers = {
     "Ocp-Apim-Subscription-Key": subscription_key,
     "Content-Type": "application/json"
 }
-data = {
-    "url": image_url
-}
+idx = 1
+for image in images:
+    data = {"url": image}
+    print("image "+str(idx))
+    response = requests.post(analyze_url, headers=headers, params=params, json=data)
+    response.raise_for_status()  # Will raise an error if status != 200
 
-# Make request
-response = requests.post(analyze_url, headers=headers, params=params, json=data)
-response.raise_for_status()
-analysis = response.json()
+    analysis = response.json()
 
-# Print caption
-captions = analysis.get("description", {}).get("captions", [])
-if captions:
-    print(f"Caption: {captions[0]['text']} (Confidence: {captions[0]['confidence']:.2f})")
-else:
-    print("No caption found.")
+    # Caption
+    captions = analysis.get("description", {}).get("captions", [])
+    if captions:
+        print(f"Caption: {captions[0]['text']} (Confidence: {captions[0]['confidence']:.2f})")
+    else:
+        print("No caption found.")
 
-# Print face info
-faces = analysis.get("faces", [])
-if faces:
-    print("\nFaces Detected:")
-    for face in faces:
-        print(f"- Age: {face['age']}, Gender: {face['gender']}, Position: {face['faceRectangle']}")
-else:
-    print("\nNo faces detected.")
+    # Faces
+    faces = analysis.get("faces", [])
+    if faces:
+        print("\nFaces Detected:")
+        for face in faces:
+            face_rect = face.get('faceRectangle', {})
+            print(f"Position: {face_rect}")
+    else:
+        print("\nNo faces detected.")
+    idx +=1
