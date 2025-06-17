@@ -1,33 +1,45 @@
-from azure.cognitiveservices.vision.computervision import ComputerVisionClient
-from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
-from msrest.authentication import CognitiveServicesCredentials
-import os
+import requests
+import json
 
-# === Replace with your actual key and endpoint ===
+# === Replace these with your actual values ===
 subscription_key = "YOUR_COMPUTER_VISION_KEY"
-endpoint = "YOUR_COMPUTER_VISION_ENDPOINT"
-
-# Sample image URL (can also be a local file)
+endpoint = "YOUR_COMPUTER_VISION_ENDPOINT"  # e.g. "https://<region>.api.cognitive.microsoft.com/"
 image_url = "https://upload.wikimedia.org/wikipedia/commons/9/99/Black_and_white_portrait_of_a_man.jpg"
 
-# Authenticate client
-client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(subscription_key))
+# Computer Vision Analyze API URL
+analyze_url = f"{endpoint}/vision/v3.2/analyze"
 
-# Analyze image with description and face detection
-features = [VisualFeatureTypes.description, VisualFeatureTypes.faces]
-analysis = client.analyze_image(image_url, visual_features=features)
+# Parameters for what we want to analyze
+params = {
+    "visualFeatures": "Description,Faces"
+}
 
-# Caption output
-if analysis.description and analysis.description.captions:
-    caption = analysis.description.captions[0]
-    print(f"Caption: {caption.text} (Confidence: {caption.confidence:.2f})")
+# Headers and body
+headers = {
+    "Ocp-Apim-Subscription-Key": subscription_key,
+    "Content-Type": "application/json"
+}
+data = {
+    "url": image_url
+}
+
+# Make request
+response = requests.post(analyze_url, headers=headers, params=params, json=data)
+response.raise_for_status()
+analysis = response.json()
+
+# Print caption
+captions = analysis.get("description", {}).get("captions", [])
+if captions:
+    print(f"Caption: {captions[0]['text']} (Confidence: {captions[0]['confidence']:.2f})")
 else:
     print("No caption found.")
 
-# Face detection output
-if analysis.faces:
+# Print face info
+faces = analysis.get("faces", [])
+if faces:
     print("\nFaces Detected:")
-    for face in analysis.faces:
-        print(f"- Age: {face.age}, Gender: {face.gender}, Position: {face.face_rectangle}")
+    for face in faces:
+        print(f"- Age: {face['age']}, Gender: {face['gender']}, Position: {face['faceRectangle']}")
 else:
     print("\nNo faces detected.")
