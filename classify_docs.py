@@ -49,8 +49,6 @@ def describe_image():
 
 def classify_document(tags, text_lines):
     text = " ".join(text_lines).lower()
-    if "invoice" in text or "amount" in text or "total" in text:
-        return "Invoice"
     if "resume" in text or "curriculum vitae" in text:
         return "Resume"
     if "meeting" in text or "agenda" in text:
