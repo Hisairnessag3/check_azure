@@ -5,7 +5,7 @@ import json
 API_KEY = ""
 ENDPOINT = ""
 
-IMAGE_URL = "https://upload.wikimedia.org/wikipedia/commons/0/0c/ReceiptSwiss.jpg"
+IMAGE_URL = "https://raw.githubusercontent.com/Hisairnessag3/check_azure/refs/heads/main/receipt1.png"
 
 headers = {
     "Ocp-Apim-Subscription-Key": API_KEY,
