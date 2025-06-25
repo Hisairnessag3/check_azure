@@ -40,23 +40,6 @@ def tag_image():
     response = post_json("/vision/v3.2/tag", "tag_image")
     print_json("Tag Image", response)
 
-def detect_domain(domain):
-    response = post_json(f"/vision/v3.2/models/{domain}/analyze", f"detect_{domain}")
-    print_json(f"Detect Domain - {domain.title()}", response)
-
-def generate_thumbnail():
-    url = f"{ENDPOINT}/vision/v3.2/generateThumbnail"
-    json_body = {"url": image_sources["generate_thumbnail"]}
-    response = requests.post(url, headers=headers, json=json_body, params={
-        "width": 100,
-        "height": 100,
-        "smartCropping": "true"
-    })
-    print(f"\n=== Generate Thumbnail ===\nThumbnail bytes received: {len(response.content)}")
-
-def area_of_interest():
-    response = post_json("/vision/v3.2/areaOfInterest", "area_of_interest")
-    print_json("Area of Interest", response)
 
 def read_ocr():
     url = f"{ENDPOINT}/vision/v3.2/read/analyze"
