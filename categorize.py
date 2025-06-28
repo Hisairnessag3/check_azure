@@ -7,9 +7,9 @@ from urllib.request import urlretrieve
 API_KEY = ""
 ENDPOINT = ""
 # API endpoint
-VISION_ANALYZE_URL = AZURE_ENDPOINT + "vision/v3.2/analyze"
+VISION_ANALYZE_URL = ENDPOINT + "vision/v3.2/analyze"
 HEADERS = {
-    'Ocp-Apim-Subscription-Key': AZURE_KEY,
+    'Ocp-Apim-Subscription-Key': API_KEY,
     'Content-Type': 'application/json'
 }
 PARAMS = {
